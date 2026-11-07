@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="lt"><head><meta charset="utf-8"><title>SAG Kinas</title>
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}#p,video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+#msg{position:absolute;left:0;right:0;top:45%;text-align:center;color:#fff;font:600 28px Arial,sans-serif;text-shadow:0 2px 4px #000}</style></head>
+<body><div id="msg">SAGMAX</div><div id="p"></div>
+<script>
+// SAG kino teatro grotuvas: kinas.html?v=<YouTube nuoroda arba ID>&start=<sekundes>  arba  ?src=<.webm/.mp4>&start=<s>
+var q=new URLSearchParams(location.search),start=Math.max(0,parseInt(q.get('start'))||0),msg=document.getElementById('msg');
+function ytId(u){if(!u)return null;if(/^[A-Za-z0-9_-]{11}$/.test(u))return u;var m=String(u).match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:null;}
+var src=q.get('src'),id=ytId(q.get('v'));
+if(src){var v=document.createElement('video');v.autoplay=true;v.src=src;v.addEventListener('loadedmetadata',function(){try{v.currentTime=start}catch(e){}});v.addEventListener('playing',function(){msg.style.display='none'});v.addEventListener('error',function(){msg.textContent='Nepavyko paleisti video'});document.getElementById('p').replaceWith(v);var pr=v.play();if(pr&&pr.catch)pr.catch(function(){v.muted=true;v.play()});}
+else if(id){var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);
+ window.onYouTubeIframeAPIReady=function(){new YT.Player('p',{videoId:id,playerVars:{autoplay:1,controls:0,disablekb:1,modestbranding:1,rel:0,iv_load_policy:3,playsinline:1,start:start,origin:location.origin},
+  events:{onReady:function(e){msg.style.display='none';e.target.setVolume(100);e.target.playVideo();},
+          onStateChange:function(e){if(e.data===-1||e.data===5){e.target.playVideo();}},
+          onError:function(e){msg.style.display='block';msg.textContent='Sio video negalima rodyti (klaida '+e.data+')';}}});};}
+else msg.textContent='Nera filmo';
+</script></body></html>
